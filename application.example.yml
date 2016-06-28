@@ -1,0 +1,23 @@
+mailgun:
+  enabled: true
+  domain: mailgundomain.example.org
+  apiKey: abcd1234
+  from:
+    address: test@example.com
+    display: StubSpy Alert
+
+stubhub:
+  token: xyz9999
+
+alerts:
+  -
+    eventId: 1234567
+    zoneId: 9999
+    maxPrice: 100
+    dailySummary: true
+    instantAlert: true
+
+notifications:
+  email: john.doe@example.com
+
+
