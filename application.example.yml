@@ -20,6 +20,7 @@ alerts:
 notifications:
   email: john.doe@example.com
 
+debug: true
 
 logging:
   file: logs/app.log
