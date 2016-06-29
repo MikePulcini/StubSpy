@@ -5,6 +5,8 @@ import org.pulcini.jubhub.model.EventListings;
 import org.pulcini.jubhub.model.Listing;
 import org.pulcini.stubspy.service.AlertService;
 import org.pulcini.stubspy.service.Mailer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,6 +20,8 @@ import java.util.Map;
  */
 @Component
 public class ScheduledChecker {
+
+    private static final Logger logger = LoggerFactory.getLogger(ScheduledChecker.class);
 
     @Autowired
     Mailer mailer;
@@ -39,6 +43,7 @@ public class ScheduledChecker {
 
     @Scheduled(cron = "*/30 * * * * *")
     public void checkInstant() {
+        logger.debug("Starting check for instant notifications...");
         for ( Alert alert : alertService.getAlerts() ) {
             if ( alert.isInstantAlert() ) {
                 checkInstant(alert);

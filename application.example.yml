@@ -21,3 +21,8 @@ notifications:
   email: john.doe@example.com
 
 
+logging:
+  file: logs/app.log
+  level:
+    root: info
+    org.pulcini.stubspy: debug

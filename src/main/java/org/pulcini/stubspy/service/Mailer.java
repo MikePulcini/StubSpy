@@ -2,6 +2,8 @@ package org.pulcini.stubspy.service;
 
 import net.sargue.mailgun.Configuration;
 import net.sargue.mailgun.Mail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class Mailer {
+
+    private static final Logger logger = LoggerFactory.getLogger(Mailer.class);
 
     Configuration config;
 
@@ -31,6 +35,8 @@ public class Mailer {
 
     public void sendMail(String to, String subject, String content) {
         if ( !enabled ) return;
+
+        logger.info("Mailing notification to {}. Subject={}, content={}", to, subject, content);
 
         Mail.using(config)
                 .to(to)
