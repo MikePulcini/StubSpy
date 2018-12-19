@@ -10,12 +10,32 @@ stubhub:
   token: xyz9999
 
 alerts:
-  -
-    eventId: 1234567
-    zoneId: 9999
-    maxPrice: 100
-    dailySummary: true
-    instantAlert: true
+-
+  stubhub:
+    enabled: true
+    eventId: 103577617 # Dolphins @ Bills 12/30/2018
+    zoneId: 2733 # Club sections
+  ticketmasterResale:
+    enabled: true
+    eventId: 00005467B0618E66 # Dolphins @ Bills 12/30/2018
+    sections:
+    - 206
+    - 207
+    - 208
+  quantity: 2
+  rows:
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  eventName: Bills vs Dolphins
+  maxPrice: 180
+  dailySummary: true # Not currently implemented
+  instantAlert: true
+
 
 notifications:
   email: john.doe@example.com

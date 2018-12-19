@@ -1,6 +1,6 @@
 package org.pulcini.stubspy.service;
 
-import org.pulcini.stubspy.Alert;
+import org.pulcini.stubspy.config.Alert;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
