@@ -4,6 +4,7 @@ import org.pulcini.stubspy.client.JubhubClient;
 import org.pulcini.stubspy.client.TicketmasterResaleClient;
 import org.pulcini.stubspy.config.Alert;
 import org.pulcini.stubspy.model.BasicListing;
+import org.pulcini.stubspy.service.notification.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,10 @@ public class ScheduledChecker {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledChecker.class);
 
     @Autowired
-    Mailer mailer;
+    NotificationService notificationService;
 
     @Autowired
     AlertService alertService;
-
-    @Value("${notifications.email}")
-    String notificationEmail;
 
     JubhubClient jubhubClient;
     TicketmasterResaleClient tmrClient;
@@ -103,8 +101,7 @@ public class ScheduledChecker {
     }
 
     private void sendInstantNotification(BasicListing listing, Alert alert) {
-        mailer.sendMail(
-                notificationEmail,
+        notificationService.sendNotification(
                  alert.getEventName() + " tickets found at " + listing.getBasicSource() + "!",
                 "$" + listing.getBasicTotalCost() + " => " + listing.getBasicSection() + " / Row " + listing.getBasicRow() + " / Seats " + listing.getBasicSeatNumbers());
     }

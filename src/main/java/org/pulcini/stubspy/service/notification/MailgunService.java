@@ -1,4 +1,4 @@
-package org.pulcini.stubspy.service;
+package org.pulcini.stubspy.service.notification;
 
 import net.sargue.mailgun.Configuration;
 import net.sargue.mailgun.Mail;
@@ -6,23 +6,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by mike on 6/27/2016.
  */
 @Service
-public class Mailer {
+@ConditionalOnProperty(name = "app.notifications", havingValue = "mailgun")
+public class MailgunService implements NotificationService {
 
-    private static final Logger logger = LoggerFactory.getLogger(Mailer.class);
+    private static final Logger logger = LoggerFactory.getLogger(MailgunService.class);
 
     Configuration config;
 
-    @Value("${mailgun.enabled}")
-    private boolean enabled;
+    @Value("${mailgun.to}")
+    private String to;
 
     @Autowired
-    public Mailer(
+    public MailgunService(
             @Value("${mailgun.domain}") String domain,
             @Value("${mailgun.apiKey}") String apiKey,
             @Value("${mailgun.from.display}") String displayName,
@@ -33,8 +35,7 @@ public class Mailer {
                 .from(displayName, fromAddress);
     }
 
-    public void sendMail(String to, String subject, String content) {
-        if ( !enabled ) return;
+    public void sendNotification(String subject, String content) {
 
         logger.info("Mailing notification to {}. Subject={}, content={}", to, subject, content);
 

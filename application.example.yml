@@ -1,10 +1,19 @@
+app:
+  notifications: twilio # or change to mailgun
+
 mailgun:
-  enabled: true
   domain: mailgundomain.example.org
   apiKey: abcd1234
   from:
     address: test@example.com
     display: StubSpy Alert
+  to: john.doe@example.com
+
+twilio:
+  from: +12125550000
+  to: +12125551234
+  authToken: aaaaa123
+  accountSid: bbbbb456
 
 stubhub:
   token: xyz9999
@@ -35,10 +44,6 @@ alerts:
   maxPrice: 180
   dailySummary: true # Not currently implemented
   instantAlert: true
-
-
-notifications:
-  email: john.doe@example.com
 
 debug: true
 
