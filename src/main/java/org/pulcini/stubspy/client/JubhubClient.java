@@ -5,7 +5,14 @@ import org.pulcini.stubspy.model.BasicListing;
 import org.pulcini.stubspy.model.stubhub.Event;
 import org.pulcini.stubspy.model.stubhub.EventListings;
 import org.pulcini.stubspy.model.stubhub.Listing;
+import org.pulcini.stubspy.service.persistence.InMemoryPersistenceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -15,22 +22,23 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@Service
+@ConditionalOnProperty(name = "stubhub.token")
 public class JubhubClient {
 
-    private static final String DEFAULT_BASE_URL = "https://api.stubhub.com";
+    private static final Logger logger = LoggerFactory.getLogger(JubhubClient.class);
 
     private Client client;
+
+    @Value("${stubhub.token}")
     private String token;
+
+    @Value("${stubhub.baseURL:https://api.stubhub.com}")
     private String baseURL;
 
-    public JubhubClient(String token) {
-        this(token, DEFAULT_BASE_URL);
-    }
-
-    public JubhubClient(String token, String baseURL) {
-        this.baseURL = baseURL;
-        this.token = token;
-
+    @PostConstruct
+    private void init() {
+        logger.info("Initializing JubhubClient...");
         client = ClientBuilder.newClient();
     }
 

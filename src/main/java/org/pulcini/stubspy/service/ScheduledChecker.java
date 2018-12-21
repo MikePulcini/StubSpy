@@ -8,7 +8,6 @@ import org.pulcini.stubspy.service.notification.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -30,19 +29,13 @@ public class ScheduledChecker {
     @Autowired
     AlertService alertService;
 
+    @Autowired(required = false)
     JubhubClient jubhubClient;
-    TicketmasterResaleClient tmrClient;
 
     Map<String, Double> lowestKnownPrice = new HashMap<String, Double>();
 
-    @Autowired
-    public ScheduledChecker(
-            @Value("${stubhub.token}") String stubhubToken,
-            @Value("${ticketmasterResale.apiKey}") String tmrApiKey,
-            @Value("${ticketmasterResale.apiSecret}") String tmrApiSecret) {
-        jubhubClient = new JubhubClient(stubhubToken);
-        tmrClient = new TicketmasterResaleClient(tmrApiKey, tmrApiSecret);
-    }
+    @Autowired(required = false)
+    TicketmasterResaleClient tmrClient;
 
     @Scheduled(cron = "*/30 * * * * *")
     public void checkInstant() {
@@ -56,13 +49,13 @@ public class ScheduledChecker {
 
     private void checkInstant(Alert alert) {
 
-        if ( alert.getStubhub().isEnabled() ) {
+        if ( jubhubClient != null && alert.getStubhub().isEnabled() ) {
             List<BasicListing> listings = jubhubClient.retrieveEventListings(alert.getStubhub().getEventId(), alert.getQuantity(), alert.getStubhub().getZoneId());
             logger.debug("Processing {} listings from Stubhub...", listings.size());
             processListings(listings, alert);
         }
 
-        if ( alert.getTicketmasterResale().isEnabled() ) {
+        if ( tmrClient != null && alert.getTicketmasterResale().isEnabled() ) {
             List<BasicListing> listings = tmrClient.retrieveOffers(alert.getTicketmasterResale().getEventId(), alert.getTicketmasterResale().getSections());
             logger.debug("Processing {} listings from TicketmasterResale...", listings.size());
             processListings(listings, alert);

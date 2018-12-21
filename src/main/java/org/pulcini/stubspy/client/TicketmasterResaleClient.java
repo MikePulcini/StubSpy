@@ -3,7 +3,14 @@ package org.pulcini.stubspy.client;
 import org.pulcini.stubspy.model.BasicListing;
 import org.pulcini.stubspy.model.ticketmasterresale.Offer;
 import org.pulcini.stubspy.model.ticketmasterresale.TicketmasterResaleEventListings;
+import org.pulcini.stubspy.service.persistence.InMemoryPersistenceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
@@ -11,25 +18,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Service
+@ConditionalOnProperty(name = "ticketmasterResale.apiKey")
 public class TicketmasterResaleClient {
 
-    private static final String DEFAULT_BASE_URL = "https://offeradapter.ticketmaster.com";
+    private static final Logger logger = LoggerFactory.getLogger(TicketmasterResaleClient.class);
 
     private Client client;
+
+    @Value("${ticketmasterResale.apiKey}")
     private String apiKey;
+
+    @Value("${ticketmasterResale.apiSecret}")
     private String apiSecret;
+
+    @Value("${ticketmasterResale.baseURL:https://offeradapter.ticketmaster.com}")
     private String baseURL;
 
-
-    public TicketmasterResaleClient(String apiKey, String apiSecret) {
-        this(apiKey, apiSecret, DEFAULT_BASE_URL);
-    }
-
-    public TicketmasterResaleClient(String apiKey, String apiSecret, String baseURL) {
-        this.apiKey = apiKey;
-        this.apiSecret = apiSecret;
-        this.baseURL = baseURL;
-
+    @PostConstruct
+    private void init() {
+        logger.info("Initializing TicketmasterResaleClient...");
         client = ClientBuilder.newClient();
     }
 
