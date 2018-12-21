@@ -1,5 +1,6 @@
 app:
   notifications: twilio # or change to mailgun
+  persistence: inmemory
 
 mailgun:
   domain: mailgundomain.example.org

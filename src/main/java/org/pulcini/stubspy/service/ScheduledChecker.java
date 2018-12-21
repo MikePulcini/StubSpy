@@ -5,15 +5,14 @@ import org.pulcini.stubspy.client.TicketmasterResaleClient;
 import org.pulcini.stubspy.config.Alert;
 import org.pulcini.stubspy.model.BasicListing;
 import org.pulcini.stubspy.service.notification.NotificationService;
+import org.pulcini.stubspy.service.persistence.PersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by mike on 6/28/2016.
@@ -27,12 +26,13 @@ public class ScheduledChecker {
     NotificationService notificationService;
 
     @Autowired
+    PersistenceService persistenceService;
+
+    @Autowired
     AlertService alertService;
 
     @Autowired(required = false)
     JubhubClient jubhubClient;
-
-    Map<String, Double> lowestKnownPrice = new HashMap<String, Double>();
 
     @Autowired(required = false)
     TicketmasterResaleClient tmrClient;
@@ -70,18 +70,12 @@ public class ScheduledChecker {
 
             if ( listing.getBasicTotalCost() < alert.getMaxPrice() ) {
                 // check if lower than current known price
-                if ( !lowestKnownPrice.containsKey(getMapKey(listing)) || lowestKnownPrice.get(getMapKey(listing)) > listing.getBasicTotalCost() ) {
-                    lowestKnownPrice.put(getMapKey(listing), listing.getBasicTotalCost());
+                if ( !persistenceService.isKnownListing(listing) || persistenceService.getLowestPrice(listing) > listing.getBasicTotalCost() ) {
+                    persistenceService.saveLowestPrice(listing);
                     sendInstantNotification(listing, alert);
-                } else {
-                    // already known; no-op
                 }
             }
         }
-    }
-
-    private String getMapKey(BasicListing listing) {
-        return listing.getBasicSource() + "||" + listing.getBasicListingId();
     }
 
     private boolean isMatch(BasicListing listing, Alert alert) {
