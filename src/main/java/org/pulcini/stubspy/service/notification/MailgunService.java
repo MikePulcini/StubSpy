@@ -29,6 +29,9 @@ public class MailgunService implements NotificationService {
             @Value("${mailgun.apiKey}") String apiKey,
             @Value("${mailgun.from.display}") String displayName,
             @Value("${mailgun.from.address}") String fromAddress ) {
+
+        logger.info("Using Mailgun for notifications...");
+
         config = new Configuration()
                 .domain(domain)
                 .apiKey(apiKey)

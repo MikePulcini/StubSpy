@@ -34,6 +34,8 @@ public class TwilioService implements NotificationService {
 
     @PostConstruct
     private void init() {
+        logger.info("Using Twilio for notifications...");
+
         Twilio.init(accountSid, authToken);
         to = new PhoneNumber(toStr);
         from = new PhoneNumber(fromStr);
