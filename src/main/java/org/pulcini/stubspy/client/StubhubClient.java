@@ -5,7 +5,6 @@ import org.pulcini.stubspy.model.BasicListing;
 import org.pulcini.stubspy.model.stubhub.Event;
 import org.pulcini.stubspy.model.stubhub.EventListings;
 import org.pulcini.stubspy.model.stubhub.Listing;
-import org.pulcini.stubspy.service.persistence.InMemoryPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +23,9 @@ import java.util.List;
 
 @Service
 @ConditionalOnProperty(name = "stubhub.token")
-public class JubhubClient {
+public class StubhubClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(JubhubClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(StubhubClient.class);
 
     private Client client;
 
@@ -38,7 +37,7 @@ public class JubhubClient {
 
     @PostConstruct
     private void init() {
-        logger.info("Initializing JubhubClient...");
+        logger.info("Initializing StubhubClient...");
         client = ClientBuilder.newClient();
     }
 

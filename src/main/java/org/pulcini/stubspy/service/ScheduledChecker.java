@@ -1,6 +1,6 @@
 package org.pulcini.stubspy.service;
 
-import org.pulcini.stubspy.client.JubhubClient;
+import org.pulcini.stubspy.client.StubhubClient;
 import org.pulcini.stubspy.client.TicketmasterResaleClient;
 import org.pulcini.stubspy.config.Alert;
 import org.pulcini.stubspy.model.BasicListing;
@@ -32,7 +32,7 @@ public class ScheduledChecker {
     AlertService alertService;
 
     @Autowired(required = false)
-    JubhubClient jubhubClient;
+    StubhubClient stubhubClient;
 
     @Autowired(required = false)
     TicketmasterResaleClient tmrClient;
@@ -49,8 +49,8 @@ public class ScheduledChecker {
 
     private void checkInstant(Alert alert) {
 
-        if ( jubhubClient != null && alert.getStubhub().isEnabled() ) {
-            List<BasicListing> listings = jubhubClient.retrieveEventListings(alert.getStubhub().getEventId(), alert.getQuantity(), alert.getStubhub().getZoneId());
+        if ( stubhubClient != null && alert.getStubhub().isEnabled() ) {
+            List<BasicListing> listings = stubhubClient.retrieveEventListings(alert.getStubhub().getEventId(), alert.getQuantity(), alert.getStubhub().getZoneId());
             logger.debug("Processing {} listings from Stubhub...", listings.size());
             processListings(listings, alert);
         }
