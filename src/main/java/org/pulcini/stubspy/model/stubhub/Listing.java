@@ -2,6 +2,7 @@
 package org.pulcini.stubspy.model.stubhub;
 
 import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang3.StringUtils;
 import org.pulcini.stubspy.model.BasicListing;
 
 import javax.annotation.Generated;
@@ -603,7 +604,11 @@ public class Listing implements BasicListing {
 
     @Override
     public String getBasicSeatNumbers() {
-        return this.getSeatNumbers();
+        if (StringUtils.isNotBlank(this.getSeatNumbers())) {
+            return this.getSeatNumbers();
+        } else {
+            return "(seat number(s) not available)";
+        }
     }
 
     @Override
