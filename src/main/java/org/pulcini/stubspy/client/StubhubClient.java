@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.naming.ConfigurationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -51,45 +52,23 @@ public class StubhubClient {
         return e;
     }
 
-    public List<BasicListing> retrieveEventListings(long eventId, int zoneId) {
-        return retrieveEventListings(eventId, -1, zoneId);
-    }
+    public List<BasicListing> retrieveEventListings(StubhubSearchCriteria sc) {
+        logger.debug("Performing Stubhub listing search with criteria {}", sc);
 
-    public List<BasicListing> retrieveEventListings(long eventId, int quantity, int zoneId) {
-        return retrieveEventListings(eventId, quantity, Collections.singletonList(zoneId));
-    }
-
-    public List<BasicListing> retrieveEventListings(long eventId, int quantity, Collection<Integer> zoneIds) {
         WebTarget wt = client.target(baseURL)
                 .path("/search/inventory/v2")
-                .queryParam("eventId", eventId)
-                .queryParam("zoneIDList", StringUtils.join(zoneIds, ','));
+                .queryParam("eventId", sc.getEventId());
 
-        if ( quantity > -1 ) {
-            wt = wt.queryParam("quantity", quantity);
+        if ( !sc.getSectionIds().isEmpty() ) {
+            wt = wt.queryParam("sectionIDList", StringUtils.join(sc.getSectionIds(), ','));
+        } else if ( !sc.getZoneIds().isEmpty() ) {
+            wt = wt.queryParam("zoneIDList", StringUtils.join(sc.getZoneIds(), ','));
+        } else {
+            throw new IllegalArgumentException("At least one of sectionIDList or zoneIDList must be supplied");
         }
 
-        EventListings e = wt
-                .request(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .get(EventListings.class);
-
-        List<BasicListing> ret = new ArrayList<BasicListing>();
-        for ( Listing l : e.getListing() ) {
-            ret.add(l);
-        }
-
-        return ret;
-    }
-
-    public List<BasicListing> retrieveBasicEventListings(long eventId, int quantity, Collection<Integer> zoneIds) {
-        WebTarget wt = client.target(baseURL)
-                .path("/search/inventory/v2")
-                .queryParam("eventId", eventId)
-                .queryParam("zoneIDList", StringUtils.join(zoneIds, ','));
-
-        if ( quantity > -1 ) {
-            wt = wt.queryParam("quantity", quantity);
+        if ( sc.getQuantity() > -1 ) {
+            wt = wt.queryParam("quantity", sc.getQuantity());
         }
 
         EventListings e = wt

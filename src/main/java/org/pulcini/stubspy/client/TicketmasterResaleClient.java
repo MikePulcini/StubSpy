@@ -3,7 +3,6 @@ package org.pulcini.stubspy.client;
 import org.pulcini.stubspy.model.BasicListing;
 import org.pulcini.stubspy.model.ticketmasterresale.Offer;
 import org.pulcini.stubspy.model.ticketmasterresale.TicketmasterResaleEventListings;
-import org.pulcini.stubspy.service.persistence.InMemoryPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,11 +40,12 @@ public class TicketmasterResaleClient {
         client = ClientBuilder.newClient();
     }
 
-    public List<BasicListing> retrieveOffers(String eventId, Collection<String> sections) {
+    public List<BasicListing> retrieveOffers(TicketmasterResaleSearchCriteria sc) {
+        logger.debug("Performing Ticketmaster Resale listing search with criteria {}", sc);
         TicketmasterResaleEventListings trel = client.target(baseURL)
-                .path("/api/ismds/event/" + eventId + "/facets")
+                .path("/api/ismds/event/" + sc.getEventId() + "/facets")
                 .queryParam("by", "inventorytypes%20%2B%20offers")
-                .queryParam("q", buildFilterString(sections))
+                .queryParam("q", buildFilterString(sc.getSections()))
                 .queryParam("show", "places")
                 .queryParam("embed", "offer")
                 .queryParam("apikey", apiKey)

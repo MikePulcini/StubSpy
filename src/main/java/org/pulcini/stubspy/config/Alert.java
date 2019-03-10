@@ -1,13 +1,15 @@
 package org.pulcini.stubspy.config;
 
+import org.pulcini.stubspy.client.StubhubSearchCriteria;
+import org.pulcini.stubspy.client.TicketmasterResaleSearchCriteria;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by mike on 6/28/2016.
  */
 public class Alert {
-//    private int eventId;
-//    private int zoneId;
     private int quantity;
     private double maxPrice;
     private boolean dailySummary;
@@ -19,7 +21,8 @@ public class Alert {
 
     public static class Stubhub {
         private int eventId;
-        private int zoneId;
+        public List<Integer> zoneIds = new ArrayList<Integer>();
+        private List<Integer> sectionIds = new ArrayList<Integer>();
         private boolean enabled;
 
         public int getEventId() {
@@ -30,12 +33,20 @@ public class Alert {
             this.eventId = eventId;
         }
 
-        public int getZoneId() {
-            return zoneId;
+        public List<Integer> getZoneIds() {
+            return zoneIds;
         }
 
-        public void setZoneId(int zoneId) {
-            this.zoneId = zoneId;
+        public void setZoneIds(List<Integer> zoneIds) {
+            this.zoneIds = zoneIds;
+        }
+
+        public List<Integer> getSectionIds() {
+            return sectionIds;
+        }
+
+        public void setSectionIds(List<Integer> sectionIds) {
+            this.sectionIds = sectionIds;
         }
 
         public boolean isEnabled() {
@@ -110,22 +121,6 @@ public class Alert {
     public void setRows(List<String> rows) {
         this.rows = rows;
     }
-//
-//    public int getEventId() {
-//        return eventId;
-//    }
-//
-//    public void setEventId(int eventId) {
-//        this.eventId = eventId;
-//    }
-//
-//    public int getZoneId() {
-//        return zoneId;
-//    }
-//
-//    public void setZoneId(int zoneId) {
-//        this.zoneId = zoneId;
-//    }
 
     public double getMaxPrice() {
         return maxPrice;
@@ -159,11 +154,34 @@ public class Alert {
         this.eventName = eventName;
     }
 
+    public boolean isStubhubEnabled() {
+        return this.stubhub != null && this.stubhub.isEnabled();
+    }
+
+    public StubhubSearchCriteria getStubhubSearchCriteria() {
+        StubhubSearchCriteria sc = new StubhubSearchCriteria();
+        sc.setEventId(this.getStubhub().getEventId());
+        sc.setQuantity(this.getQuantity());
+        sc.setSectionIds(this.getStubhub().getSectionIds());
+        sc.setZoneIds(this.getStubhub().getZoneIds());
+        return sc;
+    }
+
+    public boolean isTicketmasterResaleEnabled() {
+        return this.ticketmasterResale != null && this.ticketmasterResale.isEnabled();
+    }
+
+    public TicketmasterResaleSearchCriteria getTicketmasterResaleSearchCriteria() {
+        TicketmasterResaleSearchCriteria sc = new TicketmasterResaleSearchCriteria();
+        sc.setEventId(this.getTicketmasterResale().getEventId());
+        sc.setSections(this.getTicketmasterResale().getSections());
+        return sc;
+    }
+
     @Override
     public String toString() {
         return "Alert{" +
                 "eventId=" + stubhub.getEventId() +
-                ", zoneId=" + stubhub.getZoneId() +
                 ", maxPrice=" + maxPrice +
                 ", dailySummary=" + dailySummary +
                 ", instantAlert=" + instantAlert +

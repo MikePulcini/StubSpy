@@ -49,14 +49,14 @@ public class ScheduledChecker {
 
     private void checkInstant(Alert alert) {
 
-        if ( stubhubClient != null && alert.getStubhub().isEnabled() ) {
-            List<BasicListing> listings = stubhubClient.retrieveEventListings(alert.getStubhub().getEventId(), alert.getQuantity(), alert.getStubhub().getZoneId());
+        if ( stubhubClient != null && alert.isStubhubEnabled() ) {
+            List<BasicListing> listings = stubhubClient.retrieveEventListings(alert.getStubhubSearchCriteria());
             logger.debug("Processing {} listings from Stubhub...", listings.size());
             processListings(listings, alert);
         }
 
-        if ( tmrClient != null && alert.getTicketmasterResale().isEnabled() ) {
-            List<BasicListing> listings = tmrClient.retrieveOffers(alert.getTicketmasterResale().getEventId(), alert.getTicketmasterResale().getSections());
+        if ( tmrClient != null && alert.isTicketmasterResaleEnabled() ) {
+            List<BasicListing> listings = tmrClient.retrieveOffers(alert.getTicketmasterResaleSearchCriteria());
             logger.debug("Processing {} listings from TicketmasterResale...", listings.size());
             processListings(listings, alert);
         }

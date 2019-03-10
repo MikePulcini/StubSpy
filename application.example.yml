@@ -24,7 +24,11 @@ alerts:
   stubhub:
     enabled: true
     eventId: 103577617 # Dolphins @ Bills 12/30/2018
-    zoneId: 2733 # Club sections
+    zoneIds:
+      - 2733 # Club sections
+    #sectionIds: # Can provide sectionIds or zoneIds, but not both
+    #  - 1512278
+    #  - 2308493
   ticketmasterResale:
     enabled: true
     eventId: 00005467B0618E66 # Dolphins @ Bills 12/30/2018
