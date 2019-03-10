@@ -1,5 +1,5 @@
 app:
-  notifications: twilio # or change to mailgun
+  notifications: twilio # other valid values: mailgun, loggingonly
   persistence: inmemory
 
 mailgun:
