@@ -1,7 +1,8 @@
 package org.pulcini.stubspy.service.notification;
 
-import net.sargue.mailgun.Configuration;
-import net.sargue.mailgun.Mail;
+import com.mailgun.api.v3.MailgunMessagesApi;
+import com.mailgun.client.MailgunClient;
+import com.mailgun.model.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,35 +19,39 @@ public class MailgunService implements NotificationService {
 
     private static final Logger logger = LoggerFactory.getLogger(MailgunService.class);
 
-    Configuration config;
-
-    @Value("${mailgun.to}")
-    private String to;
+    private final MailgunMessagesApi mailgunMessagesApi;
+    private final String domain;
+    private final String fromAddress;
+    private final String to;
 
     @Autowired
     public MailgunService(
             @Value("${mailgun.domain}") String domain,
             @Value("${mailgun.apiKey}") String apiKey,
             @Value("${mailgun.from.display}") String displayName,
-            @Value("${mailgun.from.address}") String fromAddress ) {
+            @Value("${mailgun.from.address}") String fromAddress,
+            @Value("${mailgun.to}") String to) {
 
         logger.info("Using Mailgun for notifications...");
 
-        config = new Configuration()
-                .domain(domain)
-                .apiKey(apiKey)
-                .from(displayName, fromAddress);
+        this.domain = domain;
+        this.fromAddress = displayName + " <" + fromAddress + ">";
+        this.to = to;
+        this.mailgunMessagesApi = MailgunClient.config(apiKey)
+                .createApi(MailgunMessagesApi.class);
     }
 
     public void sendNotification(String subject, String content) {
 
         logger.info("Mailing notification to {}. Subject={}, content={}", to, subject, content);
 
-        Mail.using(config)
+        Message message = Message.builder()
+                .from(fromAddress)
                 .to(to)
                 .subject(subject)
                 .text(content)
-                .build()
-                .send();
+                .build();
+
+        mailgunMessagesApi.sendMessage(domain, message);
     }
 }
