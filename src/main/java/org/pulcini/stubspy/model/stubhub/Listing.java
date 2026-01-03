@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang3.StringUtils;
 import org.pulcini.stubspy.model.BasicListing;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
